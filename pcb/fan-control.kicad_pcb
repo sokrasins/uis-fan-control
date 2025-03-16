@@ -5203,7 +5203,7 @@
 			)
 		)
 		(property "Value" "ESP32-C6-WROOM-1-N8"
-			(at -0.2125 0 360)
+			(at -0.2125 0 0)
 			(layer "F.Fab")
 			(uuid "9430bf99-4199-40a1-b74b-11ac9833389b")
 			(effects
