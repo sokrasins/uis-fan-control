@@ -19,7 +19,8 @@ fan_speed_t speed = FAN_SPEED_OFF;
 fan_handle_t *fan = NULL;
 button_handle_t *button = NULL;
 
-void app_main(void) {
+void app_main(void) 
+{
     status_t status;
 
     // Set up the fan
@@ -53,7 +54,8 @@ void app_main(void) {
     }
 }
 
-void button_cb(button_handle_t handle, button_state_t state) {
+void button_cb(button_handle_t handle, button_state_t state) 
+{
     status_t status;
 
     if (state == BUTTON_STATE_ON)
@@ -71,8 +73,10 @@ void button_cb(button_handle_t handle, button_state_t state) {
     }
 }
 
-void advance_fan_speed(fan_speed_t *speed) {
-    switch (*speed) {
+void advance_fan_speed(fan_speed_t *speed) 
+{
+    switch (*speed) 
+    {
         case FAN_SPEED_ON:
             // Go back to the beginning
             *speed = FAN_SPEED_OFF;

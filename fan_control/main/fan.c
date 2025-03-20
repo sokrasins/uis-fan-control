@@ -12,17 +12,17 @@
 
 /// @brief Map from fan_speed_t to % duty
 float fan_speed_dict[] = {
-    0.0,
-    21.5,
-    29.5,
-    37.5,
-    46.5,
-    54.5,
-    62.5,
-    70.5,
-    79.5,
-    87.5,
-    100.0
+    0.0,    // FAN_SPEED_OFF
+    21.5,   // FAN_SPEED_1
+    29.5,   // FAN_SPEED_2
+    37.5,   // FAN_SPEED_3
+    46.5,   // FAN_SPEED_4
+    54.5,   // FAN_SPEED_5
+    62.5,   // FAN_SPEED_6
+    70.5,   // FAN_SPEED_7
+    79.5,   // FAN_SPEED_8
+    87.5,   // FAN_SPEED_9
+    100.0   // FAN_SPEED_ON
 };
 
 typedef struct {
@@ -32,7 +32,8 @@ typedef struct {
 
 static fan_ctx_t _ctx = {0, };
 
-fan_handle_t fan_init(fan_chan_t chan, int pin) {
+fan_handle_t fan_init(fan_chan_t chan, int pin) 
+{
     
     if (chan != FAN_CHAN_1)
     {
