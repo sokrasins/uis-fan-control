@@ -20,6 +20,8 @@
         "task.h": "c",
         "queue.h": "c",
         "board.h": "c",
-        "button.h": "c"
+        "button.h": "c",
+        "sys.h": "c",
+        "esp_timer.h": "c"
     }
 }

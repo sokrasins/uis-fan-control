@@ -1,17 +1,11 @@
 #include "button.h"
+#include "log.h"
 
-#include "esp_log.h"
 #include "driver/gpio.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-
-// Logging setup
-static const char* TAG = "button";
-#define INFO(format, ...)  ESP_LOGI(TAG, format, __VA_ARGS__)
-#define ERROR(format, ...) ESP_LOGE(TAG, format, __VA_ARGS__)
-#define DEBUG(format, ...) ESP_LOGD(TAG, format, __VA_ARGS__)
 
 #define BUTTON_QUEUE_DEPTH 10U
 

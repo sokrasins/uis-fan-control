@@ -1,14 +1,8 @@
 #include "fan.h"
 #include "status.h"
+#include "log.h"
 
-#include "esp_log.h"
 #include "driver/ledc.h"
-
-// Logging setup
-static const char* TAG = "fan";
-#define INFO(format, ...)  ESP_LOGI(TAG, format, __VA_ARGS__)
-#define ERROR(format, ...) ESP_LOGE(TAG, format, __VA_ARGS__)
-#define DEBUG(format, ...) ESP_LOGD(TAG, format, __VA_ARGS__)
 
 #define FAN_TIMER               LEDC_TIMER_0
 #define FAN_PWM_MODE            LEDC_LOW_SPEED_MODE

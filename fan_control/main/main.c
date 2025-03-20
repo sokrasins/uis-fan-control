@@ -4,17 +4,10 @@
 #include "button.h"
 #include "fan.h"
 #include "sys.h"
-
-#include "esp_log.h"
+#include "log.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
-// Logging setup
-static const char* TAG = "main";
-#define INFO(format, ...)  ESP_LOGI(TAG, format, __VA_ARGS__)
-#define ERROR(format, ...) ESP_LOGE(TAG, format, __VA_ARGS__)
-#define DEBUG(format, ...) ESP_LOGD(TAG, format, __VA_ARGS__)
 
 #define LONG_PRESS_TIME 1000U //ms
 #define LOOP_TIME       100U  //ms
