@@ -7,22 +7,22 @@
 #define FAN_PWM_MODE            LEDC_LOW_SPEED_MODE
 #define FAN_PWM_CHANNEL         LEDC_CHANNEL_0
 #define FAN_DUTY_RES            LEDC_TIMER_13_BIT
-#define FAN_FREQUENCY           (5000U)
 #define FAN_DUTY_COUNT          (1 << FAN_DUTY_RES)
+#define FAN_PWM_FREQUENCY       5000U
 
-/// @brief Map from fan_speed_t to % duty
-float fan_speed_dict[] = {
-    0.0,    // FAN_SPEED_OFF
-    21.5,   // FAN_SPEED_1
-    29.5,   // FAN_SPEED_2
-    37.5,   // FAN_SPEED_3
-    46.5,   // FAN_SPEED_4
-    54.5,   // FAN_SPEED_5
-    62.5,   // FAN_SPEED_6
-    70.5,   // FAN_SPEED_7
-    79.5,   // FAN_SPEED_8
-    87.5,   // FAN_SPEED_9
-    100.0   // FAN_SPEED_ON
+/// @brief Map from fan_speed_t to % duty. Duty is specified ins 10th's of a percent.
+uint32_t fan_speed_dict[] = {
+    0,     // FAN_SPEED_OFF
+    215,   // FAN_SPEED_1
+    295,   // FAN_SPEED_2
+    375,   // FAN_SPEED_3
+    465,   // FAN_SPEED_4
+    545,   // FAN_SPEED_5
+    625,   // FAN_SPEED_6
+    705,   // FAN_SPEED_7
+    795,   // FAN_SPEED_8
+    875,   // FAN_SPEED_9
+    1000   // FAN_SPEED_ON
 };
 
 typedef struct {
@@ -47,7 +47,7 @@ fan_handle_t fan_init(fan_chan_t chan, int pin)
         .speed_mode       = _ctx.mode,
         .timer_num        = FAN_TIMER,
         .duty_resolution  = FAN_DUTY_RES,
-        .freq_hz          = FAN_FREQUENCY,
+        .freq_hz          = FAN_PWM_FREQUENCY,
         .clk_cfg          = LEDC_AUTO_CLK,
     };
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
@@ -79,7 +79,7 @@ status_t fan_set_speed(fan_handle_t *handle, fan_speed_t speed)
     }
 
     fan_ctx_t *ctx = (fan_ctx_t *) handle;
-    uint32_t duty = (uint32_t) (FAN_DUTY_COUNT * (fan_speed_dict[speed] / 100.0));
+    uint32_t duty = (uint32_t) (FAN_DUTY_COUNT * fan_speed_dict[speed] / 1000));
 
     ESP_ERROR_CHECK(ledc_set_duty(ctx->mode, ctx->chan, duty));
     ESP_ERROR_CHECK(ledc_update_duty(ctx->mode, ctx->chan));

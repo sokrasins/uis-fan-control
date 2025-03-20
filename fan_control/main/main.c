@@ -7,13 +7,19 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-// Helpers/callbacks
+#define LONG_PRESS_TIME 2000U //ms
+#define LOOP_TIME       100U  //ms
+
+// Local functions
 void button_cb(button_handle_t handle, button_state_t state);
 void advance_fan_speed(fan_speed_t *speed);
 
 // App state
-int loop_time_ms = 1000;
 fan_speed_t speed = FAN_SPEED_OFF;
+
+// Button state
+bool pushed = false;
+int push_time = 0;
 
 // Objects
 fan_handle_t *fan = NULL;
@@ -24,7 +30,7 @@ void app_main(void)
     status_t status;
 
     // Set up the fan
-    fan = fan_init(FAN_CHAN_1, BOARD_FAN1_OUT_IO);
+    fan = fan_init(FAN_CHAN_1, BOARD_FAN_OUT_PIN);
     if (fan == NULL)
     {
         printf("ERROR initializing the fan controller\r\n");
@@ -32,7 +38,7 @@ void app_main(void)
     }
 
     // Set up button
-    button = button_init(BOARD_BUTTON_IN_IO);
+    button = button_init(BOARD_BUTTON_IN_PIN);
     if (button == NULL)
     {
         printf("ERROR initializing the button controller\r\n");
@@ -49,26 +55,41 @@ void app_main(void)
 
     while (1)
     {
-        // Wait here
-        vTaskDelay(pdMS_TO_TICKS(loop_time_ms));
+        // Check for a long button press here
+        if (pushed && (millis() - push_time) >= LONG_PRESS_TIME)
+        {
+            printf("Long button press detected\r\n");
+            pushed = false;
+            speed = FAN_SPEED_OFF;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(LOOP_TIME));
     }
 }
 
 void button_cb(button_handle_t handle, button_state_t state) 
 {
     status_t status;
-
-    if (state == BUTTON_STATE_ON)
+    if(state == BUTTON_STATE_OFF)
     {
-        // Advance fan speed
-        advance_fan_speed(&speed);
-        printf("new fan speed: %d\r\n", speed);
-        
-        // Set the new fan speed
-        status = fan_set_speed(fan, speed);
-        if (status != STATUS_OK)
+        pushed = true;
+        push_time = millis();
+    }
+    else if (state == BUTTON_STATE_ON)
+    {
+        if (pushed)
         {
-            printf("ERROR setting fan speed: %u\r\n", (int)status);
+            pushed = false;
+            // Advance fan speed
+            advance_fan_speed(&speed);
+            printf("new fan speed: %d\r\n", speed);
+        
+            // Set the new fan speed
+            status = fan_set_speed(fan, speed);
+            if (status != STATUS_OK)
+            {
+                printf("ERROR setting fan speed: %u\r\n", (int)status);
+            }
         }
     }
 }

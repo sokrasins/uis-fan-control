@@ -90,10 +90,9 @@ static void button_task(void* arg)
         if (xQueueReceive(_evt_queue, &ctx, portMAX_DELAY)) 
         {
             button_state_t cur_state = button_get_state(ctx);
-            //printf("GPIO[%d] intr, val: %d\n", ctx->pin, cur_state);
             if (ctx->last_state != cur_state) 
             {
-                if (ctx->cb) 
+                if (ctx->cb)
                 {
                     ctx->cb((button_handle_t *)ctx, cur_state);
                 }
