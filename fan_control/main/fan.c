@@ -79,7 +79,7 @@ status_t fan_set_speed(fan_handle_t *handle, fan_speed_t speed)
     }
 
     fan_ctx_t *ctx = (fan_ctx_t *) handle;
-    uint32_t duty = (uint32_t) (FAN_DUTY_COUNT * fan_speed_dict[speed] / 1000));
+    uint32_t duty = (uint32_t) (FAN_DUTY_COUNT * fan_speed_dict[speed] / 1000);
 
     ESP_ERROR_CHECK(ledc_set_duty(ctx->mode, ctx->chan, duty));
     ESP_ERROR_CHECK(ledc_update_duty(ctx->mode, ctx->chan));

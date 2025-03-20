@@ -45,7 +45,7 @@ button_handle_t button_init(int button_pin)
     io_conf.pull_up_en = 0;
     ESP_ERROR_CHECK(gpio_config(&io_conf));
 
-    _ctx.last_state = gpio_get_level(_ctx.pin);
+    _ctx.last_state = button_get_state((button_handle_t) &_ctx);
 
     xTaskCreate(button_task, "button_task", 2048, NULL, 10, NULL);
 

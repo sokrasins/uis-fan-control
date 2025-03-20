@@ -3,11 +3,12 @@
 #include "board.h"
 #include "button.h"
 #include "fan.h"
+#include "sys.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define LONG_PRESS_TIME 2000U //ms
+#define LONG_PRESS_TIME 1000U //ms
 #define LOOP_TIME       100U  //ms
 
 // Local functions
@@ -58,9 +59,15 @@ void app_main(void)
         // Check for a long button press here
         if (pushed && (millis() - push_time) >= LONG_PRESS_TIME)
         {
-            printf("Long button press detected\r\n");
+            printf("Long button press detected, shutting off fan\r\n");
             pushed = false;
             speed = FAN_SPEED_OFF;
+
+            status = fan_set_speed(fan, speed);
+            if (status != STATUS_OK)
+            {
+                printf("ERROR setting fan speed: %u\r\n", (int)status);
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(LOOP_TIME));
