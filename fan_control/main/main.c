@@ -5,8 +5,16 @@
 #include "fan.h"
 #include "sys.h"
 
+#include "esp_log.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
+// Logging setup
+static const char* TAG = "main";
+#define INFO(format, ...)  ESP_LOGI(TAG, format, __VA_ARGS__)
+#define ERROR(format, ...) ESP_LOGE(TAG, format, __VA_ARGS__)
+#define DEBUG(format, ...) ESP_LOGD(TAG, format, __VA_ARGS__)
 
 #define LONG_PRESS_TIME 1000U //ms
 #define LOOP_TIME       100U  //ms
@@ -34,7 +42,7 @@ void app_main(void)
     fan = fan_init(FAN_CHAN_1, BOARD_FAN_OUT_PIN);
     if (fan == NULL)
     {
-        printf("ERROR initializing the fan controller\r\n");
+        ERROR("ERROR initializing the fan controller");
         return;
     }
 
@@ -42,31 +50,31 @@ void app_main(void)
     button = button_init(BOARD_BUTTON_IN_PIN);
     if (button == NULL)
     {
-        printf("ERROR initializing the button controller\r\n");
+        ERROR("ERROR initializing the button controller");
         return;
     }
 
     status = button_assign_cb(button, button_cb);
     if (status != STATUS_OK)
     {
-        printf("ERROR assigning button callback\r\n");
+        ERROR("ERROR assigning button callback");
     }
 
-    printf("Init done!\r\n");
+    INFO("Init done!");
 
     while (1)
     {
         // Check for a long button press here
         if (pushed && (millis() - push_time) >= LONG_PRESS_TIME)
         {
-            printf("Long button press detected, shutting off fan\r\n");
+            INFO("Long button press detected, shutting off fan");
             pushed = false;
             speed = FAN_SPEED_OFF;
 
             status = fan_set_speed(fan, speed);
             if (status != STATUS_OK)
             {
-                printf("ERROR setting fan speed: %u\r\n", (int)status);
+                ERROR("ERROR setting fan speed: %u", (int)status);
             }
         }
 
@@ -89,13 +97,13 @@ void button_cb(button_handle_t handle, button_state_t state)
             pushed = false;
             // Advance fan speed
             advance_fan_speed(&speed);
-            printf("new fan speed: %d\r\n", speed);
+            INFO("new fan speed: %d", speed);
         
             // Set the new fan speed
             status = fan_set_speed(fan, speed);
             if (status != STATUS_OK)
             {
-                printf("ERROR setting fan speed: %u\r\n", (int)status);
+                ERROR("ERROR setting fan speed: %u", (int)status);
             }
         }
     }

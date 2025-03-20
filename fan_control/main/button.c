@@ -1,10 +1,17 @@
 #include "button.h"
 
+#include "esp_log.h"
 #include "driver/gpio.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+
+// Logging setup
+static const char* TAG = "button";
+#define INFO(format, ...)  ESP_LOGI(TAG, format, __VA_ARGS__)
+#define ERROR(format, ...) ESP_LOGE(TAG, format, __VA_ARGS__)
+#define DEBUG(format, ...) ESP_LOGD(TAG, format, __VA_ARGS__)
 
 #define BUTTON_QUEUE_DEPTH 10U
 
@@ -90,10 +97,14 @@ static void button_task(void* arg)
         if (xQueueReceive(_evt_queue, &ctx, portMAX_DELAY)) 
         {
             button_state_t cur_state = button_get_state(ctx);
+
+            DEBUG("event in queue");
+            DEBUG("last state: %d, cur state: %d", ctx->last_state, cur_state);
             if (ctx->last_state != cur_state) 
             {
                 if (ctx->cb)
                 {
+                    DEBUG("calling registered callback wtih state %d", cur_state);
                     ctx->cb((button_handle_t *)ctx, cur_state);
                 }
                 ctx->last_state = cur_state;
