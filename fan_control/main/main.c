@@ -55,7 +55,7 @@ void app_main(void)
     }
 
     // Set up button
-    button = button_init(BOARD_BUTTON_IN_PIN);
+    button = button_init(BOARD_BUTTON_IN_PIN, BUTTON_POL_NEG);
     if (button == NULL)
     {
         ERROR("ERROR initializing the button controller");

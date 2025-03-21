@@ -11,11 +11,13 @@
 
 typedef struct {
     int pin;
+    button_polarity_t pol;
     button_state_t last_state;
     button_cb_t cb;
 } button_ctx_t;
 
 static void button_task(void* arg);
+static button_state_t button_state_from_int(int i, button_polarity_t pol);
 
 static button_ctx_t _ctx;
 QueueHandle_t _evt_queue = NULL;
@@ -27,9 +29,10 @@ static void IRAM_ATTR gpio_isr_handler(void* arg)
     xQueueSendFromISR(_evt_queue, &ctx, NULL);
 }
 
-button_handle_t button_init(int button_pin)
+button_handle_t button_init(int button_pin, button_polarity_t pol)
 {
     _ctx.pin = button_pin;
+    _ctx.pol = pol;
 
     if (_evt_queue == NULL)
     {
@@ -80,7 +83,7 @@ button_state_t button_get_state(button_handle_t handle)
     }
 
     button_ctx_t *ctx = (button_ctx_t *) handle;
-    return button_state_from_int(gpio_get_level(ctx->pin));
+    return button_state_from_int(gpio_get_level(ctx->pin), ctx->pol);
 }
 
 static void button_task(void* arg)
@@ -106,3 +109,13 @@ static void button_task(void* arg)
         }
     }
 }
+
+static button_state_t button_state_from_int(int i, button_polarity_t pol)
+{
+    if (i == 0) 
+    {
+        return (pol == BUTTON_POL_POS ? BUTTON_STATE_ON : BUTTON_STATE_OFF);
+    }
+
+    return (pol == BUTTON_POL_POS ? BUTTON_STATE_OFF : BUTTON_STATE_ON);
+};
