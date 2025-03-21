@@ -22,6 +22,8 @@
         "board.h": "c",
         "button.h": "c",
         "sys.h": "c",
-        "esp_timer.h": "c"
+        "esp_timer.h": "c",
+        "log.h": "c",
+        "esp_system.h": "c"
     }
 }

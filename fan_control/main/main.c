@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "board.h"
+#include "storage.h"
 #include "button.h"
 #include "fan.h"
 #include "sys.h"
@@ -10,10 +11,12 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
-#define LONG_PRESS_TIME 1000U //ms
-#define LOOP_TIME       100U  //ms
+#define LONG_PRESS_TIME     1000U //ms
+#define LOOP_TIME           100U  //ms
 
-#define BUTTON_QUEUE_DEPTH 10U
+#define BUTTON_QUEUE_DEPTH  10U
+
+#define FAN_SPEED_KEY       "fan_speed"
 
 typedef enum {
     APP_FAN_ON,
@@ -45,6 +48,23 @@ void app_main(void)
 
     // Set up queue
     button_queue = xQueueCreate(BUTTON_QUEUE_DEPTH, sizeof(uint8_t));
+
+    // Set up storage
+    status = storage_init();
+    if (status != STATUS_OK)
+    {
+        // I don't think we return here, storage isn't a critical part
+        ERROR("ERROR initializing storage");
+    }
+
+    // Load stored fan speed if it's there
+    uint32_t fan_speed_data = 0;
+    status = storage_read_u32(FAN_SPEED_KEY, &fan_speed_data);
+    if (status == STATUS_OK)
+    {
+        INFO("Loading saved fan speed %lu", fan_speed_data);
+        speed = (fan_speed_t) fan_speed_data;
+    }
 
     // Set up the fan
     fan = fan_init(FAN_CHAN_1, BOARD_FAN_OUT_PIN);
@@ -160,5 +180,12 @@ void advance_fan_speed(fan_speed_t *speed)
             // Increment the fan speed by one
             *speed = *speed + 1;
             break;
+    }
+
+    // Save the modified fan speed
+    status_t status = storage_write_u32(FAN_SPEED_KEY, (uint32_t) *speed);
+    if (status != STATUS_OK)
+    {
+        ERROR("Error (%d) writing fan speed to storage", (int) status);
     }
 }
