@@ -3,6 +3,7 @@
 #include "board.h"
 #include "storage.h"
 #include "button.h"
+#include "wheel.h"
 #include "fan.h"
 #include "sys.h"
 #include "log.h"
@@ -74,6 +75,9 @@ void app_main(void)
         return;
     }
 
+    // Init LED wheel
+    wheel_init();
+
     // Set up button
     button = button_init(BOARD_BUTTON_IN_PIN, BUTTON_POL_NEG);
     if (button == NULL)
@@ -104,6 +108,7 @@ void app_main(void)
                         // button is pressed
                         INFO("Turning Fan ON with speed: %d", speed);
                         status = fan_set_speed(fan, speed);
+                        wheel_update_level(speed);
                         app_state = APP_FAN_ON;
                     }
                     break;
@@ -129,6 +134,7 @@ void app_main(void)
                             // Change fan speed and set
                             advance_fan_speed(&speed);
                             status = fan_set_speed(fan, speed);
+                            wheel_update_level(speed);
                             if (status != STATUS_OK)
                             {
                                 ERROR("ERROR setting fan speed: %u", (int)status);
@@ -151,6 +157,7 @@ void app_main(void)
 
             // Set speed off
             status = fan_set_speed(fan, FAN_SPEED_OFF);
+            wheel_update_level(FAN_SPEED_OFF);
             if (status != STATUS_OK)
             {
                 ERROR("ERROR setting fan speed: %u", (int)status);
