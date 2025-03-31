@@ -77,6 +77,7 @@ void app_main(void)
 
     // Init LED wheel
     wheel_init();
+    wheel_update_level(FAN_SPEED_OFF);
 
     // Set up button
     button = button_init(BOARD_BUTTON_IN_PIN, BUTTON_POL_NEG);
