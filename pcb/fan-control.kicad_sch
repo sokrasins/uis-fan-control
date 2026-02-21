@@ -5392,6 +5392,17 @@
 		)
 		(uuid "3065fda1-d80a-423c-b81c-617a8cdb7a6c")
 	)
+	(text "TODO: Button footprint doesn't match reality\n"
+		(exclude_from_sim no)
+		(at 126.492 133.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 255 0 255 1)
+			)
+		)
+		(uuid "370e7672-8d07-4282-bd83-0b1130c3d76c")
+	)
 	(text "SMPS 10V -> 3V3"
 		(exclude_from_sim no)
 		(at 134.366 17.526 0)
@@ -5404,6 +5415,17 @@
 			)
 		)
 		(uuid "427bb6b1-1d4c-4538-90de-ad3c337cd332")
+	)
+	(text "TODO: Mounting holes off a bit"
+		(exclude_from_sim no)
+		(at 195.834 168.402 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 255 0 255 1)
+			)
+		)
+		(uuid "4d2fc5c5-c15f-4756-b0ed-047895a1beda")
 	)
 	(text "Indicator Circle"
 		(exclude_from_sim no)
